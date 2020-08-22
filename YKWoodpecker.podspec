@@ -2,7 +2,7 @@ Pod::Spec.new do |spec|
 
   spec.license      = "MIT"
   spec.name         = "YKWoodpecker"
-  spec.version      = "1.2.8"
+  spec.version      = "1.2.8.1"
   spec.summary      = "An in-app-debug tool for iOS."
 
   spec.description  = "This library provides a powerful collection of iOS develop tools, such as view picker, "  \
@@ -23,7 +23,16 @@ Pod::Spec.new do |spec|
   spec.source       = { :git => "https://github.com/alibaba/youku-sdk-tool-woodpecker.git", :tag => "#{spec.version}" }
  
   spec.source_files = "YKWoodpecker/**/*.{h,m}"
-  spec.public_header_files = "YKWoodpecker/*.h"
+  spec.public_header_files = "YKWoodpecker/YKWoodpecker.h",
+                             "YKWoodpecker/YKWoodpecker.h", 
+                             "YKWoodpecker/Base/**/*.h", 
+                             "YKWoodpecker/Common/**/*.h", 
+                             "YKWoodpecker/Plugins/ProbeRulerPlugin/**/*.h",
+                             "YKWoodpecker/Plugins/CommandPlugin/**/*.h",
+                             "YKWoodpecker/Plugins/FPSPlugin/**/*.h",
+                             "YKWoodpecker/Plugins/CPUPlugin/**/*.h",
+                             "YKWoodpecker/Plugins/MemoryPlugin/**/*.h",
+                             "YKWoodpecker/Plugins/DataFlowPlugin/**/*.h"
 
   spec.resource = "YKWoodpecker/**/*.{png,plist,xcassets,json}"
  
