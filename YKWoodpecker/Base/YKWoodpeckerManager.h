@@ -50,6 +50,11 @@ Automatically open 'UI Check' tool on show.
 @property (nonatomic, assign) BOOL autoOpenUICheckOnShow;
 
 /**
+ debug icon view
+ */
+@property (nonatomic, strong) UIView *debugIconView;
+
+/**
  Show woodpecker entrance.
  */
 - (void)show;

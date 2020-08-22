@@ -90,9 +90,9 @@ NSString *const YKWPluginReceiveMessageNotification = @"YKWPluginReceiveMessageN
     if (_pluginsEntrance) {
         [_pluginsEntrance show];
     } else {
-        _pluginsEntrance = [[YKWPluginsWindow alloc] initWithFrame:CGRectMake(22, 150, 0, 0)];
-        [_pluginsEntrance showWoodpecker];
+        _pluginsEntrance = [[YKWPluginsWindow alloc] initWithFrame:CGRectMake(0, 150, 0, 0)];
         _pluginsEntrance.delegate = self;
+        [_pluginsEntrance showWoodpecker];
         _pluginsEntrance.pluginModelArray = _pluginsArray;
         
         if (self.autoOpenUICheckOnShow) {
@@ -114,7 +114,7 @@ NSString *const YKWPluginReceiveMessageNotification = @"YKWPluginReceiveMessageN
 }
 
 - (void)setWoodpeckerRestPoint:(CGPoint)woodpeckerRestPoint {
-    if (CGRectContainsPoint(UIEdgeInsetsInsetRect([UIScreen mainScreen].applicationFrame, UIEdgeInsetsMake(20, 20, 20, 20)), woodpeckerRestPoint)) {
+    if (CGRectContainsPoint(UIEdgeInsetsInsetRect([UIScreen mainScreen].bounds, UIEdgeInsetsMake(20, 20, 20, 20)), woodpeckerRestPoint)) {
         _pluginsEntrance.ykw_left = woodpeckerRestPoint.x;
         _pluginsEntrance.ykw_top = woodpeckerRestPoint.y;
     }
@@ -299,6 +299,10 @@ NSString *const YKWPluginReceiveMessageNotification = @"YKWPluginReceiveMessageN
     } else {
         [YKWoodpeckerMessage showMessage:YKWLocalizedString(@"Open failed")];
     }
+}
+
+- (UIView *)pluginsWindow {
+    return _debugIconView;
 }
 
 // ----------------------------- Crash Plugin -----------------------------

@@ -36,7 +36,6 @@
 @optional
 - (void)pluginsWindow:(YKWPluginsWindow *)pluginsWindow didSelectPlugin:(YKWPluginModel *)pluginModel;
 - (UIView *)pluginsWindow;
-
 @end
 
 @interface YKWPluginsWindow : UIWindow

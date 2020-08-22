@@ -130,28 +130,32 @@
 }
 
 - (void)showWoodpecker {
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(pluginsWindow)]) {
         _debugIcon = [self.delegate pluginsWindow];
-        return;
     }
     
-    UIImage *icon = [UIImage imageNamed:@"icon_woodpecker" inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
-    UIImageView *woodpeckerIcon;
-    if (icon) {
-        woodpeckerIcon = [[UIImageView alloc] initWithImage:icon];
-        woodpeckerIcon.layer.anchorPoint = CGPointMake(0.5, 0.9);
-    } else {
-        woodpeckerIcon = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 38., 38.)];
-        woodpeckerIcon.backgroundColor = [YKWHighlightColor colorWithAlphaComponent:0.8];
-        woodpeckerIcon.clipsToBounds = YES;
-        woodpeckerIcon.layer.anchorPoint = CGPointMake(0.7, 0.7);
-        woodpeckerIcon.layer.cornerRadius = woodpeckerIcon.ykw_width / 2.0;
+    if (!_debugIcon) {
+        UIImage *icon = [UIImage imageNamed:@"icon_woodpecker" inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
+           UIImageView *woodpeckerIcon;
+        if (icon) {
+           woodpeckerIcon = [[UIImageView alloc] initWithImage:icon];
+           woodpeckerIcon.layer.anchorPoint = CGPointMake(0.5, 0.9);
+        } else {
+           woodpeckerIcon = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 38., 38.)];
+           woodpeckerIcon.backgroundColor = [YKWHighlightColor colorWithAlphaComponent:0.8];
+           woodpeckerIcon.clipsToBounds = YES;
+           woodpeckerIcon.layer.anchorPoint = CGPointMake(0.7, 0.7);
+           woodpeckerIcon.layer.cornerRadius = woodpeckerIcon.ykw_width / 2.0;
+        }
+        woodpeckerIcon.center = CGPointMake(2, 2);
+        _debugIcon = woodpeckerIcon;
     }
-    woodpeckerIcon.center = CGPointMake(2, 2);
-    woodpeckerIcon.userInteractionEnabled = YES;
-    [woodpeckerIcon addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleIconTap:)]];
-    [self addSubview:woodpeckerIcon];
-    _debugIcon = woodpeckerIcon;
+    _debugIcon.userInteractionEnabled = YES;
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleIconTap:)];
+    longPress.minimumPressDuration = 0.5;
+    [_debugIcon addGestureRecognizer:longPress];
+    [self addSubview:_debugIcon];
 }
 
 #pragma mark - Icon
@@ -167,7 +171,8 @@
 }
 
 // Woodpecker pecking animation.
-- (void)handleIconTap:(id)sender {
+- (void)handleIconTap:(UILongPressGestureRecognizer *)sender {
+    if (sender.state != UIGestureRecognizerStateEnded) return;
     if (_contentView.ykw_width > 10) {
         [self fold:YES];
     } else {
@@ -178,7 +183,18 @@
 - (void)pan:(UIPanGestureRecognizer *)sender {
     CGPoint translation = [sender translationInView:sender.view];
     [sender setTranslation:CGPointZero inView:sender.view];
-    self.center = CGPointMake(self.ykw_centerX + translation.x, self.ykw_centerY + translation.y);
+    CGFloat x = self.ykw_centerX + translation.x;
+    CGFloat y = self.ykw_centerY + translation.y;
+    if (x < self.collectionView.width * 0.5) {
+        x = self.collectionView.width * 0.5;
+    } else if (x + self.collectionView.width * 0.5 > ScreenWidth) {
+        x = ScreenWidth - self.collectionView.width * 0.5;
+    } else if (y < self.collectionView.height * 0.5) {
+        y = self.collectionView.height * 0.5;
+    } else if  (y + self.collectionView.height * 0.5 > ScreenHeight - 60) {
+        y = ScreenHeight - 60 - self.collectionView.height * 0.5;
+    }
+    self.center = CGPointMake(x, y);
 }
 
 - (void)fold:(BOOL)animated {
@@ -217,9 +233,12 @@
 }
 
 - (void)checkFrameOrigin {
-    if (!CGRectContainsPoint(UIEdgeInsetsInsetRect([UIScreen mainScreen].applicationFrame, UIEdgeInsetsMake(20, 20, 20, 20)), self.frame.origin)) {
-        self.ykw_left = 20;
-        self.ykw_top = 180;
+    if (!CGRectContainsPoint([UIScreen mainScreen].bounds, self.frame.origin)) {
+        self.ykw_left = 0;
+        self.ykw_top = 80;
+    } else if (!CGRectContainsPoint([UIScreen mainScreen].bounds, CGPointMake(CGRectGetMaxX(self.frame), CGRectGetMaxY(self.frame)))) {
+        self.ykw_right = ScreenWidth;
+        self.ykw_bottom = ScreenHeight - 60;
     }
 }
 
