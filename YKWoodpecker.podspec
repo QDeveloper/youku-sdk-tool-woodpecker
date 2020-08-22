@@ -23,11 +23,7 @@ Pod::Spec.new do |spec|
   spec.source       = { :git => "https://github.com/alibaba/youku-sdk-tool-woodpecker.git", :tag => "#{spec.version}" }
  
   spec.source_files = "YKWoodpecker/**/*.{h,m}"
-  spec.public_header_files = "YKWoodpecker/YKWoodpecker.h", 
-                             "YKWoodpecker/Base/**/*.h", 
-                             "YKWoodpecker/Common/**/*.h", 
-                             "YKWoodpecker/Plugins/ProbeRulerPlugin/**/*.h",
-                             "YKWoodpecker/Plugins/CommandPlugin/**/*.h"
+  spec.public_header_files = "YKWoodpecker/*.h"
 
   spec.resource = "YKWoodpecker/**/*.{png,plist,xcassets,json}"
  
