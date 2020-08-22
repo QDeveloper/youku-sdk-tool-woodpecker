@@ -40,7 +40,7 @@
     
     UIView *_contentView;
     
-    UIImageView *_woodpeckerIcon;
+    UIView *_debugIcon;
 }
 
 @property (nonatomic, strong) UICollectionView *collectionView;
@@ -75,7 +75,7 @@
         _contentView.layer.cornerRadius = 2;
         [self addSubview:_contentView];
         
-        _woodpeckerIcon = nil;
+        _debugIcon = nil;
 
         UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
         layout.scrollDirection = UICollectionViewScrollDirectionVertical;
@@ -114,7 +114,7 @@
     [super setHidden:hidden];
     
     [self bringSubviewToFront:_contentView];
-    [self bringSubviewToFront:_woodpeckerIcon];
+    [self bringSubviewToFront:_debugIcon];
 }
 
 - (void)becomeKeyWindow {
@@ -130,29 +130,36 @@
 }
 
 - (void)showWoodpecker {
-    UIImage *icon = [UIImage imageNamed:@"icon_woodpecker" inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
-    if (icon) {
-        _woodpeckerIcon = [[UIImageView alloc] initWithImage:icon];
-        _woodpeckerIcon.layer.anchorPoint = CGPointMake(0.5, 0.9);
-    } else {
-        _woodpeckerIcon = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 38., 38.)];
-        _woodpeckerIcon.backgroundColor = [YKWHighlightColor colorWithAlphaComponent:0.8];
-        _woodpeckerIcon.clipsToBounds = YES;
-        _woodpeckerIcon.layer.anchorPoint = CGPointMake(0.7, 0.7);
-        _woodpeckerIcon.layer.cornerRadius = _woodpeckerIcon.ykw_width / 2.0;
+    if (self.delegate && [self.delegate respondsToSelector:@selector(pluginsWindow)]) {
+        _debugIcon = [self.delegate pluginsWindow];
+        return;
     }
-    _woodpeckerIcon.center = CGPointMake(2, 2);
-    _woodpeckerIcon.userInteractionEnabled = YES;
-    [_woodpeckerIcon addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleIconTap:)]];
-    [self addSubview:_woodpeckerIcon];
+    
+    UIImage *icon = [UIImage imageNamed:@"icon_woodpecker" inBundle:[NSBundle bundleForClass:[self class]] compatibleWithTraitCollection:nil];
+    UIImageView *woodpeckerIcon;
+    if (icon) {
+        woodpeckerIcon = [[UIImageView alloc] initWithImage:icon];
+        woodpeckerIcon.layer.anchorPoint = CGPointMake(0.5, 0.9);
+    } else {
+        woodpeckerIcon = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 38., 38.)];
+        woodpeckerIcon.backgroundColor = [YKWHighlightColor colorWithAlphaComponent:0.8];
+        woodpeckerIcon.clipsToBounds = YES;
+        woodpeckerIcon.layer.anchorPoint = CGPointMake(0.7, 0.7);
+        woodpeckerIcon.layer.cornerRadius = woodpeckerIcon.ykw_width / 2.0;
+    }
+    woodpeckerIcon.center = CGPointMake(2, 2);
+    woodpeckerIcon.userInteractionEnabled = YES;
+    [woodpeckerIcon addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleIconTap:)]];
+    [self addSubview:woodpeckerIcon];
+    _debugIcon = woodpeckerIcon;
 }
 
 #pragma mark - Icon
 // To receive touch events on the woodpecker icon.
 - (BOOL)pointInside:(CGPoint)point withEvent:(nullable UIEvent *)event {
-    if (_woodpeckerIcon) {
-        CGPoint p = [_woodpeckerIcon convertPoint:point fromView:self];
-        if (CGRectContainsPoint(_woodpeckerIcon.bounds, p)) {
+    if (_debugIcon) {
+        CGPoint p = [_debugIcon convertPoint:point fromView:self];
+        if (CGRectContainsPoint(_debugIcon.bounds, p)) {
             return YES;
         }
     }
@@ -161,16 +168,6 @@
 
 // Woodpecker pecking animation.
 - (void)handleIconTap:(id)sender {
-    if (_woodpeckerIcon.image) {
-        [UIView animateWithDuration:0.06 delay:0.0 usingSpringWithDamping:1.0 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-            self->_woodpeckerIcon.transform = CGAffineTransformMakeRotation(M_PI_4 - 0.2);
-        } completion:^(BOOL finished) {
-            [UIView animateWithDuration:0.05 delay:0.05 usingSpringWithDamping:1.0 initialSpringVelocity:1.0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-                self->_woodpeckerIcon.transform = CGAffineTransformIdentity;
-            } completion:nil];
-        }];
-    }
-    
     if (_contentView.ykw_width > 10) {
         [self fold:YES];
     } else {
