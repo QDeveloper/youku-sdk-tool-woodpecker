@@ -185,14 +185,14 @@
     [sender setTranslation:CGPointZero inView:sender.view];
     CGFloat x = self.ykw_centerX + translation.x;
     CGFloat y = self.ykw_centerY + translation.y;
-    if (x < self.collectionView.width * 0.5) {
-        x = self.collectionView.width * 0.5;
-    } else if (x + self.collectionView.width * 0.5 > ScreenWidth) {
-        x = ScreenWidth - self.collectionView.width * 0.5;
-    } else if (y < self.collectionView.height * 0.5) {
-        y = self.collectionView.height * 0.5;
-    } else if  (y + self.collectionView.height * 0.5 > ScreenHeight - 60) {
-        y = ScreenHeight - 60 - self.collectionView.height * 0.5;
+    if (x < self.collectionView.frame.size.width * 0.5) {
+        x = self.collectionView.frame.size.width * 0.5;
+    } else if (x + self.collectionView.frame.size.width * 0.5 > [UIScreen mainScreen].bounds.size.width) {
+        x = [UIScreen mainScreen].bounds.size.width - self.collectionView.frame.size.width * 0.5;
+    } else if (y < self.collectionView.frame.size.height * 0.5) {
+        y = self.collectionView.frame.size.height * 0.5;
+    } else if  (y + self.collectionView.frame.size.height * 0.5 > [UIScreen mainScreen].bounds.size.height - 60) {
+        y = [UIScreen mainScreen].bounds.size.height - 60 - self.collectionView.frame.size.height * 0.5;
     }
     self.center = CGPointMake(x, y);
 }
@@ -237,8 +237,8 @@
         self.ykw_left = 0;
         self.ykw_top = 80;
     } else if (!CGRectContainsPoint([UIScreen mainScreen].bounds, CGPointMake(CGRectGetMaxX(self.frame), CGRectGetMaxY(self.frame)))) {
-        self.ykw_right = ScreenWidth;
-        self.ykw_bottom = ScreenHeight - 60;
+        self.ykw_right = [UIScreen mainScreen].bounds.size.width;
+        self.ykw_bottom = [UIScreen mainScreen].bounds.size.height - 60;
     }
 }
 
